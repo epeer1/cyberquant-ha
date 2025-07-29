@@ -47,6 +47,9 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Visual Studio
+.vs/
+
 # VS Code
 .vscode/
 
