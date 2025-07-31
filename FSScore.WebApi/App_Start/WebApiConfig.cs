@@ -10,6 +10,10 @@ namespace FSScore.WebApi
 		public static void Register(HttpConfiguration config)
 		{
 			// Web API configuration and services
+			
+			// Configure JSON as default formatter (remove XML)
+			config.Formatters.Remove(config.Formatters.XmlFormatter);
+			config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
 
 			// Web API routes
 			config.MapHttpAttributeRoutes();

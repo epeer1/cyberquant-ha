@@ -20,7 +20,7 @@ namespace FSScore.WebApi.Controllers
 		// GET api/values/test-db
 		[HttpGet]
 		[Route("api/values/test-db")]
-		public ApiResponse<object> TestDatabase()
+		public ApiResponse<DatabaseTestResult> TestDatabase()
 		{
 			try
 			{
@@ -29,21 +29,26 @@ namespace FSScore.WebApi.Controllers
 
 				if (isConnected)
 				{
-					return ApiResponse<object>.SuccessResult(
-						new { DatabaseStatus = "Connected", Server = "localhost\\SQLEXPRESS", Database = "Grades" },
+					return ApiResponse<DatabaseTestResult>.SuccessResult(
+						new DatabaseTestResult 
+						{ 
+							DatabaseStatus = "Connected", 
+							Server = "localhost\\SQLEXPRESS", 
+							Database = "Grades" 
+						},
 						"Database connection successful"
 					);
 				}
 				else
 				{
-					return ApiResponse<object>.ErrorResult(
+					return ApiResponse<DatabaseTestResult>.ErrorResult(
 						"Database connection failed. Please check connection string and ensure SQL Server is running."
 					);
 				}
 			}
 			catch (Exception ex)
 			{
-				return ApiResponse<object>.ErrorResult($"Database connection error: {ex.Message}");
+				return ApiResponse<DatabaseTestResult>.ErrorResult($"Database connection error: {ex.Message}");
 			}
 		}
 

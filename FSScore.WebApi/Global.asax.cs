@@ -15,6 +15,7 @@ namespace FSScore.WebApi
 		{
 			AreaRegistration.RegisterAllAreas();
 			GlobalConfiguration.Configure(WebApiConfig.Register);
+			GlobalConfiguration.Configure(DependencyConfig.Register);  // Add dependency injection
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
