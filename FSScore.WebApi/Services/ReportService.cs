@@ -170,26 +170,25 @@ namespace FSScore.WebApi.Services
                     commandType: CommandType.StoredProcedure
                 );
 
-                // We need to get zone-level scores, so let's query zones directly
-                // since the stored procedure returns subject-level aggregation
+                // Calculate zone scores using the exact same methodology as Part 2 stored procedure
+                // This matches the "calculated scores (section 2)" requirement
                 var zoneScores = await connection.QueryAsync<ZoneScore>(@"
-                    SELECT DISTINCT
+                    SELECT 
                         z.ZoneId,
                         z.ZoneName,
-                        CASE 
-                            WHEN COUNT(q.QuestionId) > 0 THEN 
-                                CAST(AVG(CAST(q.Score AS FLOAT)) AS DECIMAL(5,2))
-                            ELSE NULL 
-                        END as Score,
+                        -- Use Part 2 calculation: AVG only of non-NULL scores (same as stored procedure)
+                        AVG(CASE WHEN q.Score IS NOT NULL THEN CAST(q.Score AS FLOAT) END) as Score,
                         COUNT(q.QuestionId) as TotalQuestions,
-                        COUNT(CASE WHEN q.Score IS NOT NULL THEN 1 END) as AnsweredQuestions
+                        SUM(CASE WHEN q.Score IS NOT NULL THEN 1 ELSE 0 END) as AnsweredQuestions
                     FROM Zones z
-                    LEFT JOIN ZonesQuestions zq ON z.SnapshotId = zq.SnapshotId AND z.ZoneId = zq.ZoneId
-                    LEFT JOIN Questions q ON zq.SnapshotId = q.SnapshotId AND zq.QuestionId = q.QuestionId
+                    INNER JOIN ZonesQuestions zq ON z.SnapshotId = zq.SnapshotId AND z.ZoneId = zq.ZoneId
+                    INNER JOIN Questions q ON zq.SnapshotId = q.SnapshotId AND zq.QuestionId = q.QuestionId
+                    INNER JOIN Tests t ON q.TestId = t.TestId
                     WHERE z.SnapshotId = @SnapshotId 
-                      AND z.IsRelevant = 1
-                      AND (q.QuestionId IS NULL OR q.IsRelevant = 1)
+                      AND z.IsRelevant = 1    -- Only relevant zones (Part 2 logic)
+                      AND q.IsRelevant = 1    -- Only relevant questions (Part 2 logic)
                     GROUP BY z.ZoneId, z.ZoneName
+                    HAVING COUNT(CASE WHEN q.Score IS NOT NULL THEN 1 END) > 0  -- Only zones with answered questions
                     ORDER BY z.ZoneName",
                     new { SnapshotId = snapshotId }
                 );

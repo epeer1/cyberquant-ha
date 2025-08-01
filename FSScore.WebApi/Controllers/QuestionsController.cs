@@ -79,14 +79,15 @@ namespace FSScore.WebApi.Controllers
         }
 
         /// <summary>
-        /// POST api/questions
-        /// Create a new question for a snapshot
+        /// POST api/questions/snapshot/{snapshotId}
+        /// Create a new question for a specific snapshot
         /// </summary>
+        /// <param name="snapshotId">The snapshot ID</param>
         /// <param name="request">Question data to create</param>
         /// <returns>Created question details</returns>
         [HttpPost]
-        [Route("")]
-        public async Task<IHttpActionResult> CreateQuestion([FromBody] CreateQuestionRequest request)
+        [Route("snapshot/{snapshotId:int}")]
+        public async Task<IHttpActionResult> CreateQuestion(int snapshotId, [FromBody] CreateQuestionRequest request)
         {
             if (request == null)
             {
@@ -94,6 +95,8 @@ namespace FSScore.WebApi.Controllers
             }
 
             var question = request.ToQuestion();
+            // Ensure the question is created for the specified snapshot
+            question.SnapshotId = snapshotId;
             var result = await _questionService.CreateQuestionAsync(question);
             
             if (result.Success)
