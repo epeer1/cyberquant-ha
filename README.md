@@ -24,6 +24,15 @@ Created 2 separate projects within the solution:
    - Standard Web API project structure
    - Layered architecture with Controllers, Services, Models, DataAccess
 
+### Dapper for Data Access
+Chose Dapper as the Object-Relational Mapper (ORM) because:
+- **Performance**: Micro-ORM with minimal overhead, faster than Entity Framework
+- **SQL Control**: Direct SQL queries give precise control over database operations
+- **Stored Procedure Support**: Perfect fit for assignment's Part 2 stored procedures
+- **Simplicity**: Lightweight, easy to use with existing database schema
+- **Raw SQL**: Enables complex queries needed for report calculations
+- **Async Support**: Modern async/await patterns for better scalability
+
 ### Custom Dependency Injection
 Implemented DI pattern similar to .NET Core because:
 - .NET Framework 4.8 Web API lacks built-in DI container
@@ -177,7 +186,8 @@ Invoke-RestMethod -Uri "https://localhost:44355/api/questions/snapshot/1001191" 
 
 ## Implementation Notes
 
-- Zone scores calculated using Section 2 methodology (average of relevant questions)
+- **Section 2 Assumption**: The stored procedure `CalculateScorePerSnapshot` is designed to be run manually by the user via SSMS or SQL scripts, not called from the API
+- **Section 4 Assumption**: Zone scores calculated using Section 2 methodology (average of relevant questions) as referenced by "calculated scores (section 2)" in the assignment
 - Proper NULL handling for unanswered questions
 - Score validation (0-100, non-negative)
 - Comprehensive error handling with HTTP status codes
