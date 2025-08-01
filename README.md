@@ -33,6 +33,15 @@ Chose Dapper as the Object-Relational Mapper (ORM) because:
 - **Raw SQL**: Enables complex queries needed for report calculations
 - **Async Support**: Modern async/await patterns for better scalability
 
+### Layered Architecture Pattern
+Implemented Controller → Service → Repository pattern because:
+- **Separation of Concerns**: Each layer has a single responsibility
+- **Testability**: Business logic can be unit tested without HTTP or database
+- **Maintainability**: Changes in one layer don't affect others
+- **Industry Standard**: Common enterprise pattern for Web APIs
+
+**Note**: Reports skip the Repository layer because they use complex stored procedures and one-off queries that don't benefit from the abstraction overhead of a repository pattern.
+
 ### Custom Dependency Injection
 Implemented DI pattern similar to .NET Core because:
 - .NET Framework 4.8 Web API lacks built-in DI container
