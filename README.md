@@ -54,7 +54,15 @@ Implemented DI pattern similar to .NET Core because:
 1. Install SQL Server Express 2019
 2. Install SQL Server Management Studio (SSMS)
 3. Restore `GRADES.bak` file to create the Grades database
-4. Run scripts in order:
+4. Verify connection string in `FSScore.WebApi/Web.config`:
+   ```xml
+   <connectionStrings>
+     <add name="GradesDB"
+          connectionString="Server=localhost\SQLEXPRESS;Database=Grades;Trusted_Connection=True;MultipleActiveResultSets=true"
+          providerName="System.Data.SqlClient" />
+   </connectionStrings>
+   ```
+5. Run scripts in order:
    - `FSScore.Database/Scripts/simple_migration_script.sql`
    - `FSScore.Database/Scripts/data_generator.sql` (optional)
    - `FSScore.Database/Scripts/calculate_score_per_snapshot.sql`
@@ -171,14 +179,29 @@ Content-Type: application/json
 }
 ```
 
-## Testing
+## Testing the API
 
-### Browser Testing (GET endpoints)
-- Database test: `https://localhost:44355/api/values/test-db`
-- Questions: `https://localhost:44355/api/questions/snapshot/1001191`
-- Student report: `https://localhost:44355/api/reports/student/1001191`
+### 1. Start the Application
+- Open solution in Visual Studio
+- Set `FSScore.WebApi` as startup project
+- Press F5 to run (starts on `https://localhost:44355`)
 
-### PowerShell Testing (POST/PUT/DELETE)
+### 2. Browser Testing (GET endpoints)
+Simply paste these URLs in your browser:
+- **Database test**: `https://localhost:44355/api/values/test-db`
+- **Get questions**: `https://localhost:44355/api/questions/snapshot/1001191`
+- **Student report**: `https://localhost:44355/api/reports/student/1001191`
+
+### 3. Postman Testing (Recommended)
+1. Download and install Postman
+2. Import or manually create requests:
+   - **POST Question**: `POST https://localhost:44355/api/questions/snapshot/1001191`
+   - **PUT Question**: `PUT https://localhost:44355/api/questions/snapshot/1001191/question/7022`
+   - **DELETE Question**: `DELETE https://localhost:44355/api/questions/snapshot/1001191/question/7022`
+   - **Principal Report**: `POST https://localhost:44355/api/reports/principal`
+3. Set `Content-Type: application/json` header for POST/PUT requests
+
+### 4. PowerShell Testing (Alternative)
 ```powershell
 # Create question
 $headers = @{'Content-Type' = 'application/json'}
@@ -191,6 +214,13 @@ $body = @{
 } | ConvertTo-Json
 
 Invoke-RestMethod -Uri "https://localhost:44355/api/questions/snapshot/1001191" -Method POST -Headers $headers -Body $body
+
+# Principal Report
+$reportBody = @{
+    SnapshotIds = @(1001190, 1001191)
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "https://localhost:44355/api/reports/principal" -Method POST -Headers $headers -Body $reportBody
 ```
 
 ## Implementation Notes
