@@ -49,6 +49,28 @@ Implemented DI pattern similar to .NET Core because:
 - Enables testability and loose coupling
 - Provides singleton/transient lifetime management
 
+## Quick Start (Required for Anyone Cloning This Repo)
+
+**⚠️ Important: This is a .NET Framework 4.8 project that requires proper package restoration.**
+
+### **Step 1: Run Setup Script**
+```powershell
+# In PowerShell, navigate to the project directory and run:
+.\setup.ps1
+```
+
+The setup script will:
+- Download NuGet.exe if needed
+- Restore all packages (including the critical Roslyn compiler)
+- Verify that the Microsoft.CodeDom.Providers.DotNetCompilerPlatform package is installed
+
+### **Step 2: Open in Visual Studio**
+1. Open `FSScoreAssignment.sln` in Visual Studio
+2. Set `FSScore.WebApi` as the startup project
+3. Press F5 to run
+
+**Note**: Visual Studio's "Restore NuGet Packages" alone is **not sufficient** for .NET Framework projects with packages.config. The setup script is required to properly copy Roslyn compiler files to the correct location.
+
 ## Database Setup
 
 1. Install SQL Server Express 2019
